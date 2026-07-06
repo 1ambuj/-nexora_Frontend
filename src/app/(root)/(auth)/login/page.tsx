@@ -4,18 +4,12 @@ import { AUTH_PAGE_TYPE } from "@/utils/enums";
 
 const LoginPage = () => {
   return (
-    <div className="flex-center main-container">
-      <div className="w-full max-w-sm">
-        <AuthForm
-          type={AUTH_PAGE_TYPE.LOGIN}
-          title="Sign In your account"
-          subTitle={
-            <>
-              Let&apos;s get started.
-            </>
-          }
-        />
-      </div>
+    <div className="w-full max-w-md rounded-2xl border border-neutral-200/70 bg-white p-8 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)]">
+      <AuthForm
+        type={AUTH_PAGE_TYPE.LOGIN}
+        title="Welcome back"
+        subTitle={<>Sign in to continue shopping with Nexora.</>}
+      />
     </div>
   );
 };

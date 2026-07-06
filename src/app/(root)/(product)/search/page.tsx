@@ -39,11 +39,10 @@ const SearchPage = async ({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className="main-container">
+    <div className="home-container py-8 md:py-10">
       <HydrationBoundary state={dehydratedState}>
         <ProductList />
       </HydrationBoundary>
-      <div className="h-10"></div>
     </div>
   );
 };

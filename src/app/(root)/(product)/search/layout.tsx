@@ -6,9 +6,11 @@ export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main>
-      <div className="flex  relative">
-        <DesktopProductFilter className={`md:w-3/12 mt-[60px] ${showOnDesktopClass}`} />
+    <main className="bg-neutral-50 min-h-screen">
+      <div className="flex relative">
+        <DesktopProductFilter
+          className={`md:w-3/12 pt-6 md:pt-8 px-4 ${showOnDesktopClass}`}
+        />
         <div className="md:w-9/12">{children}</div>
       </div>
       <MobileProductFilter />

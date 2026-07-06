@@ -54,7 +54,7 @@
   }
 
   .main-container {
-    @apply px-1;
+    @apply px-4 sm:px-6 max-w-7xl mx-auto;
     min-height: calc(100vh - var(--navbar-height));
     height: fit-content;
   }

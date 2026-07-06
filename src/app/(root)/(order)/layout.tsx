@@ -27,12 +27,12 @@ export default function Layout({
   }
 
   return (
-    <main>
+    <main className="min-h-screen bg-neutral-50">
       <RouteNavbar />
-      <section className="px-6 my-6">
+      <section className="home-container py-6">
         <CircleStepper steps={steps} curStep={getStep(pathname)} />
       </section>
-      <div className="flex flex-col items-center">{children}</div>
+      <div className="home-container pb-12">{children}</div>
     </main>
   );
 }

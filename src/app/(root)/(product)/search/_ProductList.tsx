@@ -7,7 +7,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
-import ProductCard from "../_component/ProductCard";
+import ProductCard from "../_component/ModernProductCard";
 import { usePathname, useSearchParams } from "next/navigation";
 import { LIST_PRODUCT } from "@/constants/reactquery";
 import { createSearchParamsUrl, generateProductUrl } from "@/utils/helper";
@@ -120,26 +120,46 @@ const ProductList = () => {
   }, [productData]);
 
 
-  if (isError) return <div>Sorry There was an Error</div>;
+  if (isError)
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-700">
+        Something went wrong while loading products. Please try again.
+      </div>
+    );
+
+  const hasProducts = productData?.pages?.some(
+    (page) => Array.isArray(page) && page.length > 0
+  );
 
   return (
-    <>
-      <div className="flex justify-between items-center">
-        <p className="heading ">Search Result for: {name ?? "All"}</p>
+  <>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-neutral-200/70 pb-6">
+        <div>
+          <p className="home-display text-xs font-semibold uppercase tracking-[0.22em] text-neutral-400">
+            Shop
+          </p>
+          <h1 className="home-display text-2xl md:text-3xl font-semibold text-neutral-950 mt-1">
+            {name ? `Results for “${name}”` : "All Products"}
+          </h1>
+        </div>
         <Select
           value={sort_by ?? sortList[0].value}
           onValueChange={handleSortChange}
           defaultValue={sortList[0].value}
         >
-          <SelectTrigger className={`w-[180px] md:flex hidden`}>
-            <SelectValue placeholder="Select a Filter" />
+          <SelectTrigger className="w-full sm:w-[200px] rounded-full border-neutral-200 bg-white hidden md:flex">
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="bg-background">
-            <SelectGroup >
-              <SelectLabel>Sort By: </SelectLabel>
+          <SelectContent className="bg-white">
+            <SelectGroup>
+              <SelectLabel>Sort by</SelectLabel>
               {sortList.map((e, i) => {
                 return (
-                  <SelectItem key={`sortby-${i}`} className="cursor-pointer" value={e.value}>
+                  <SelectItem
+                    key={`sortby-${i}`}
+                    className="cursor-pointer"
+                    value={e.value}
+                  >
                     {e.label}
                   </SelectItem>
                 );
@@ -148,14 +168,24 @@ const ProductList = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex flex-wrap justify-center mt-5 relative">
+
+      {!hasProducts && !isLoading ? (
+        <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-6 py-16 text-center">
+          <p className="home-display text-lg font-medium text-neutral-900">
+            No products found
+          </p>
+          <p className="mt-2 text-sm text-neutral-500">
+            Try another category or check back after products are added.
+          </p>
+        </div>
+      ) : (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
         {productData?.pages.map((productList, i) => (
           <>
             {productList &&
               Array.isArray(productList) &&
               productList.map((ele, index) => (
                 <ProductCard
-                  className="px-1 w-1/2 max-w-[250px] h-auto inline-block"
                   discount={ele.discount}
                   imgLink={ele.imgLink}
                   name={ele.name}
@@ -165,20 +195,20 @@ const ProductList = () => {
                     ele.code
                   )}
                   price={ele.price}
-                  key={index}
+                  key={`${ele.code}-${index}`}
                 />
               ))}
           </>
         ))}
+      </div>
+      )}
+
         {hasMore ? (
-          <div ref={ref} className="flex flex-col  items-center w-full">
+          <div ref={ref} className="flex flex-col items-center w-full py-10">
             <Loader />
           </div>
-        ) : (
-          ""
-        )}
-      </div>
-    </>
+        ) : null}
+  </>
   );
 };
 

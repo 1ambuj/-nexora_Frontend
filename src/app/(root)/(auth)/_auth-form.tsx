@@ -128,25 +128,31 @@ export function AuthForm({
   return (
     <>
       <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <p className="heading" style={{ marginTop: "0" }}>
-          {title}
-        </p>
-        <p className="sub-heading text-center">{subTitle}</p>
+        <div className="text-center space-y-2">
+          <p className="home-display text-2xl font-semibold tracking-tight text-neutral-950">
+            {title}
+          </p>
+          <p className="text-sm text-neutral-500 leading-relaxed">{subTitle}</p>
+        </div>
 
         <div className="grid gap-2">
           <Link href={`${BACKEND_URL}/user/sso/google`}>
             <Button
               disabled={isSubmitting}
               variant="outline"
-              className="w-full"
+              className="w-full rounded-full h-11 border-neutral-200"
             >
               <GoogleIcon />
-              {isLogin ? "Sign in with Google" : "Sign Up with Google"}
+              {isLogin ? "Sign in with Google" : "Sign up with Google"}
             </Button>
           </Link>
-          <Button disabled={isSubmitting} variant="outline" className="w-full">
+          <Button
+            disabled={isSubmitting}
+            variant="outline"
+            className="w-full rounded-full h-11 border-neutral-200"
+          >
             <FacebookIcon />
-            {isLogin ? "Sign in with Facebook" : "Sign Up with Facebook"}
+            {isLogin ? "Sign in with Facebook" : "Sign up with Facebook"}
           </Button>
         </div>
 
@@ -165,7 +171,6 @@ export function AuthForm({
             </div>
 
             <div>
-              {" "}
               <Input
                 id="password"
                 placeholder="Password"
@@ -176,7 +181,7 @@ export function AuthForm({
               {isLogin && (
                 <a
                   href="#"
-                  className="ml-auto inline-block text-xs underline-offset-4 hover:underline"
+                  className="mt-2 ml-auto block text-xs text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline"
                 >
                   Forgot your password?
                 </a>
@@ -193,20 +198,26 @@ export function AuthForm({
                 />
               </div>
             )}
-            <Button disabled={isSubmitting} type="submit" className="w-full">
-              {isLogin ? "Sign In" : "Sign Up"}
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              className="w-full rounded-full h-11 bg-neutral-950 hover:bg-neutral-800"
+            >
+              {isLogin ? "Sign In" : "Create Account"}
             </Button>
           </div>
-          <div className="mt-4 text-center text-sm">
-            {isLogin ? "Don't have an account" : "Already have an account ?"}
-            <Link href={isLogin ? "/register" : "/login"} className="link mx-2">
-              {isLogin ? "Sign Up" : "Sign In"}
+          <div className="mt-5 text-center text-sm text-neutral-500">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            <Link
+              href={isLogin ? "/register" : "/login"}
+              className="ml-2 font-medium text-neutral-900 underline-offset-4 hover:underline"
+            >
+              {isLogin ? "Sign up" : "Sign in"}
             </Link>
           </div>
         </form>
         <ScreenLoader open={showScreenLoader} />
       </div>
-      ;
     </>
   );
 }

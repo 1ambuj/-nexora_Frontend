@@ -113,7 +113,7 @@ const ShoppingBag = () => {
             <section >
               <Button
                 onClick={handlePlaceOrder}
-                className="w-full uppercase sticky top-[94vh]"
+                className="w-full rounded-full h-12 uppercase bg-neutral-950 hover:bg-neutral-800 sticky top-[88vh] md:top-[80vh]"
                 size={"lg"}
               >
                 Place Order

@@ -135,12 +135,16 @@ Carousel.displayName = "Carousel";
 const CarouselContent = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }) => {
+>(({ className, ...props }, ref) => {
   const { carouselRef } = useCarousel();
 
   return (
     <div className={cn("", className)} ref={carouselRef}>
-      <div className={cn("flex w-full h-full")} {...props}></div>
+      <div
+        ref={ref}
+        className={cn("flex w-full h-full")}
+        {...props}
+      />
     </div>
   );
 });

@@ -12,6 +12,9 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001"
+  ),
   title: "Nexora",
   description: "Discover trendy outfits and elevate your style with Nexora.",
   openGraph: {
