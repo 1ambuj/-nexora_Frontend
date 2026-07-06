@@ -42,8 +42,12 @@ const AddressPage = () => {
           ""
         )}
 
-        <Link href={"/payment"} className="mt-auto">
-          <Button className="w-full uppercase  " size={"lg"}>
+        <Link href={addressData ? "/payment" : "#"} className="mt-auto">
+          <Button
+            className="w-full uppercase"
+            size={"lg"}
+            disabled={!addressData}
+          >
             continue
           </Button>
         </Link>

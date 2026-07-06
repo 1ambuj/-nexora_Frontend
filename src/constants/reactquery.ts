@@ -19,4 +19,7 @@ export const GET_ADDRESS_LIST = "get-address-list"
 export const GET_ADDRESS = "get-address"
 export const GET_PRIMARY_ADDRESS = "get-primary-address"
 
+export const GET_ORDERS = "get-orders"
+export const GET_ORDER = "get-order"
+
 export const GET_FILTER = "get-filter";

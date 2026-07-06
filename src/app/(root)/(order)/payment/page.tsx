@@ -1,12 +1,9 @@
-import ComingSoon from '@/components/icons/ComingSoon'
-import React from 'react'
+"use client";
+
+import Payment from "@/features/order/component/Payment";
 
 const PaymentPage = () => {
-  return (
-    <div className='flex justify-center items-center h-[80vh]'>
-        <ComingSoon className='w-full' />
-    </div>
-  )
-}
+  return <Payment />;
+};
 
-export default PaymentPage
+export default PaymentPage;
