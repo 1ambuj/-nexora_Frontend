@@ -44,7 +44,7 @@ const routesForUser = [""];
 const navList = [
   { label: "Men", path: "/search?gender=men" },
   { label: "Oversized Tees", path: "/search?category=oversized-tees" },
-  { label: "Classic Tees", path: "/search?category=t-shirt" },
+  { label: "Classic Tees", path: "/search?category=t-shirts" },
   { label: "Fashion Joggers", path: "/search?category=joggers" },
   { label: "Hoodies", path: "/search?category=hoodies" },
 ];

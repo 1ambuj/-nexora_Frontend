@@ -6,7 +6,7 @@ const footerLinks = {
   shop: [
     { label: "Men", href: "/search?gender=men" },
     { label: "Hoodies", href: "/search?category=hoodies" },
-    { label: "T-Shirts", href: "/search?category=t-shirt" },
+    { label: "T-Shirts", href: "/search?category=t-shirts" },
     { label: "Joggers", href: "/search?category=joggers" },
     { label: "New Arrivals", href: "/search?collection=latest" },
   ],

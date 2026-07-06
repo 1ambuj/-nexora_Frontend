@@ -40,7 +40,7 @@ export const heroSlides = [
     subtitle:
       "Understated elegance in every thread — where minimal meets magnificent.",
     cta: "Explore Essentials",
-    redirect: "/search?category=t-shirt",
+    redirect: "/search?category=t-shirts",
   },
   {
     image: heroImage(3, "photo-1496747611176-843222e1e57c"),
@@ -81,7 +81,7 @@ export const trustFeatures = [
 
 export const quickShopLinks = [
   { label: "Hoodies", href: "/search?category=hoodies" },
-  { label: "Tees", href: "/search?category=t-shirt" },
+  { label: "Tees", href: "/search?category=t-shirts" },
   { label: "Joggers", href: "/search?category=joggers" },
   { label: "New in", href: "/search?collection=latest" },
   { label: "Best sellers", href: "/search?collection=best-sellers" },
@@ -144,7 +144,7 @@ export const fallbackCategories = [
   },
   {
     name: "T-Shirts",
-    slug: "t-shirt",
+    slug: "t-shirts",
     icon: img("photo-1521572163474-6864f9cf17ab", 500),
   },
   {
