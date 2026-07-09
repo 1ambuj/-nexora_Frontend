@@ -2,20 +2,16 @@
 
 import { cn } from "@/utils/helper";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/formFields/input";
 import GoogleIcon from "@/components/icons/brand/GoogleIcon";
 import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { emailSchema } from "@/lib/validation/commonSchema";
+import {
+  emailSchema,
+  passwordSchema,
+} from "@/lib/validation/commonSchema";
 import { loginApi, registerApi } from "@/services/auth/user-account";
 import { useToast } from "@/hooks/use-toast";
 import { ERROR_STATUS, InternalServerError } from "@/utils/errors/errors";
@@ -26,20 +22,20 @@ import Link from "next/link";
 import { AUTH_PAGE_TYPE } from "@/utils/enums";
 import { useRouter } from "next/navigation";
 import { useBoundStore } from "@/store/store";
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import ScreenLoader from "@/components/loader/ScreenLoader";
 import { BACKEND_URL } from "@/constants/common";
+import { ShoppingBag, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
   userId: emailSchema,
-  password: z.string(),
+  password: z.string().min(1, "Password is required"),
 });
 
 const registerSchema = z
   .object({
     userId: emailSchema,
-    password: z.string(),
+    password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -55,6 +51,22 @@ interface IAuthForm extends React.ComponentPropsWithoutRef<"div"> {
   subTitle: React.ReactNode;
 }
 
+function getAuthErrorMessage(error: IApiError): string {
+  if (error?.message) return error.message;
+
+  if (error?.status === ERROR_STATUS.INVALID_CRED) {
+    return "Invalid email or password";
+  }
+  if (error?.status === ERROR_STATUS.ALREADY_EXIST) {
+    return "An account with this email already exists";
+  }
+  if (error?.status === ERROR_STATUS.VALIDATION_ERROR) {
+    return "Please check your details and try again";
+  }
+
+  return "Something went wrong. Please try again.";
+}
+
 export function AuthForm({
   className,
   type,
@@ -68,7 +80,6 @@ export function AuthForm({
   const [showScreenLoader, setScreenLoader] = useState(false);
 
   const isLogin = type === AUTH_PAGE_TYPE.LOGIN;
-
   const formSchema = isLogin ? loginSchema : registerSchema;
 
   const {
@@ -84,51 +95,56 @@ export function AuthForm({
   const onSubmit: SubmitHandler<IFormFields> = async (data) => {
     try {
       setScreenLoader(true);
+
       if (isLogin) {
         const res = await loginApi(data);
         setLoggedIn({ token: res.data.accessToken });
-        router.push("/");
-      } else {
-        const res = await registerApi({
-          userId: data.userId,
-          password: data.password,
+        toast({
+          title: "Welcome back!",
+          description: "You are now signed in.",
         });
-
-        if (res.status === -1) {
-          toast({
-            title: "Registered Successfully",
-            variant: "default",
-          });
-        }
-
-        router.push("/login");
+        router.push("/");
+        return;
       }
+
+      await registerApi({
+        userId: data.userId,
+        password: data.password,
+      });
+
+      toast({
+        title: "Account created",
+        description: "Signing you in now…",
+      });
+
+      const loginRes = await loginApi({
+        userId: data.userId,
+        password: data.password,
+      });
+      setLoggedIn({ token: loginRes.data.accessToken });
+      router.push("/");
     } catch (error) {
       const typeError = error as IApiError;
-      console.log(typeError);
-      if (typeError.status === ERROR_STATUS.INVALID_CRED) {
-        toast({
-          title: "Invalid Credentails",
-          variant: "destructive",
-        });
-      } else if (typeError.status === ERROR_STATUS.ALREADY_EXIST) {
-        toast({
-          title: "Account already exists, please sign in",
-          variant: "destructive",
-        });
-      } else {
-        InternalServerError();
-      }
+      toast({
+        title: getAuthErrorMessage(typeError),
+        variant: "destructive",
+      });
     } finally {
       setScreenLoader(false);
     }
   };
 
-
   return (
     <>
       <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-3">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-950 text-white shadow-lg">
+            {isLogin ? (
+              <ShoppingBag className="h-5 w-5" />
+            ) : (
+              <Sparkles className="h-5 w-5" />
+            )}
+          </div>
           <p className="home-display text-2xl font-semibold tracking-tight text-neutral-950">
             {title}
           </p>
@@ -140,72 +156,90 @@ export function AuthForm({
             <Button
               disabled={isSubmitting}
               variant="outline"
-              className="w-full rounded-full h-11 border-neutral-200"
+              className="w-full rounded-full h-11 border-neutral-200 bg-white hover:bg-neutral-50"
             >
               <GoogleIcon />
               {isLogin ? "Sign in with Google" : "Sign up with Google"}
             </Button>
           </Link>
           <Button
-            disabled={isSubmitting}
+            disabled
             variant="outline"
-            className="w-full rounded-full h-11 border-neutral-200"
+            className="w-full rounded-full h-11 border-neutral-200 opacity-60"
           >
             <FacebookIcon />
-            {isLogin ? "Sign in with Facebook" : "Sign up with Facebook"}
+            Facebook — coming soon
           </Button>
         </div>
 
         <Divider text="OR" />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
           <div className="flex flex-col gap-3">
-            <div>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs text-neutral-500">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder="you@example.com"
+                autoComplete="email"
                 {...register("userId")}
                 errMsg={errors.userId?.message}
               />
             </div>
 
-            <div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs text-neutral-500">
+                Password
+              </Label>
               <Input
                 id="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 type="password"
+                autoComplete={isLogin ? "current-password" : "new-password"}
                 {...register("password")}
                 errMsg={errors.password?.message}
               />
               {isLogin && (
                 <a
                   href="#"
-                  className="mt-2 ml-auto block text-xs text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline"
+                  className="mt-1 ml-auto block text-xs text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline"
                 >
                   Forgot your password?
                 </a>
               )}
             </div>
+
             {!isLogin && (
-              <div>
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-xs text-neutral-500"
+                >
+                  Confirm password
+                </Label>
                 <Input
                   id="confirmPassword"
-                  placeholder="Confirm Password"
+                  placeholder="Re-enter your password"
                   type="password"
+                  autoComplete="new-password"
                   {...register("confirmPassword")}
                   errMsg={fullErrors.confirmPassword?.message}
                 />
               </div>
             )}
+
             <Button
               disabled={isSubmitting}
               type="submit"
-              className="w-full rounded-full h-11 bg-neutral-950 hover:bg-neutral-800"
+              className="mt-2 w-full rounded-full h-11 bg-neutral-950 hover:bg-neutral-800 shadow-sm"
             >
               {isLogin ? "Sign In" : "Create Account"}
             </Button>
           </div>
+
           <div className="mt-5 text-center text-sm text-neutral-500">
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <Link

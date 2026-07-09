@@ -4,7 +4,7 @@ import { AUTH_PAGE_TYPE } from "@/utils/enums";
 
 const RegisterPage = () => {
   return (
-    <div className="w-full max-w-md rounded-2xl border border-neutral-200/70 bg-white p-8 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)]">
+    <div className="w-full max-w-md rounded-3xl border border-neutral-200/80 bg-white/95 p-8 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.18)] backdrop-blur-sm">
       <AuthForm
         type={AUTH_PAGE_TYPE.REGISTER}
         title="Create your account"
