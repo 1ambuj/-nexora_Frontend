@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./globals.css";
 import ReactQueryProvider from "@/components/provider/ReactQueryProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { getSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -11,34 +12,35 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001"
-  ),
-  title: "Nexora",
-  description: "Discover trendy outfits and elevate your style with Nexora.",
+  metadataBase: new URL(siteUrl),
+  applicationName: SITE_NAME,
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Nexora — Fashion for Every Mood",
-    description:
-      "Explore our latest collection of streetwear, casual, and formal outfits. Shop now and redefine your wardrobe.",
-    url: "https://nexora.vercel.app/",
-    siteName: "Nexora",
-    images: [
-      {
-        url: "/logo.png",
-        width: 1200,
-        height: 630,
-        alt: "Nexora — Trendy Clothing",
-      },
-    ],
+    title: `${SITE_NAME} — Fashion for Every Mood`,
+    description: SITE_DESCRIPTION,
+    url: siteUrl,
+    siteName: SITE_NAME,
+    locale: "en_IN",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nexora — Style Starts Here",
-    description:
-      "Shop the latest fashion trends at Nexora. Outfits that speak your style.",
-    images: ["/logo.png"],
+    title: `${SITE_NAME} — Style Starts Here`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
