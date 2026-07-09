@@ -3,22 +3,34 @@
 import { ROUTES } from "@/utils/enums";
 import { useBoundStore } from "@/store/store";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useSyncOfflineCart } from "@/hooks/use-sync-offline-cart";
+import { consumePostLoginRedirect } from "@/utils/checkout";
+import ScreenLoader from "@/components/loader/ScreenLoader";
 
 const AuthSuccess = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || null;
-  const router = useRouter()
-
+  const router = useRouter();
   const setLoggedIn = useBoundStore((state) => state.setLoggedIn);
+  const syncOfflineCart = useSyncOfflineCart();
 
-  if (token) {
-    setLoggedIn({token: token});
-    router.replace(ROUTES.HOME)
-  }else{
-    router.back()
-  }
+  useEffect(() => {
+    async function completeAuth() {
+      if (!token) {
+        router.back();
+        return;
+      }
 
-  return null;
+      setLoggedIn({ token });
+      await syncOfflineCart();
+      router.replace(consumePostLoginRedirect(ROUTES.HOME));
+    }
+
+    completeAuth();
+  }, [router, setLoggedIn, syncOfflineCart, token]);
+
+  return <ScreenLoader open />;
 };
 
 export default AuthSuccess;

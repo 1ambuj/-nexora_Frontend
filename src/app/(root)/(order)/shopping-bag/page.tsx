@@ -1,15 +1,13 @@
-"use client"
+"use client";
 
 import ShoppingBag from "@/features/order/component/ShoppingBag";
 import { useBoundStore } from "@/store/store";
 
-const CartPage = async () => {
+const CartPage = () => {
   const hydrated = useBoundStore((state) => state.hydrated);
 
   return (
-    <>
-      <div className="main-container">{hydrated ? <ShoppingBag /> : null}</div>
-    </>
+    <div className="main-container">{hydrated ? <ShoppingBag /> : null}</div>
   );
 };
 

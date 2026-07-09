@@ -26,6 +26,8 @@ import { useState } from "react";
 import ScreenLoader from "@/components/loader/ScreenLoader";
 import { BACKEND_URL } from "@/constants/common";
 import { ShoppingBag, Sparkles } from "lucide-react";
+import { useSyncOfflineCart } from "@/hooks/use-sync-offline-cart";
+import { consumePostLoginRedirect } from "@/utils/checkout";
 
 const loginSchema = z.object({
   userId: emailSchema,
@@ -76,6 +78,7 @@ export function AuthForm({
 }: IAuthForm) {
   const router = useRouter();
   const setLoggedIn = useBoundStore((state) => state.setLoggedIn);
+  const syncOfflineCart = useSyncOfflineCart();
   const { toast } = useToast();
   const [showScreenLoader, setScreenLoader] = useState(false);
 
@@ -96,14 +99,19 @@ export function AuthForm({
     try {
       setScreenLoader(true);
 
+      const finishLogin = async (accessToken: string) => {
+        setLoggedIn({ token: accessToken });
+        await syncOfflineCart();
+        router.push(consumePostLoginRedirect("/"));
+      };
+
       if (isLogin) {
         const res = await loginApi(data);
-        setLoggedIn({ token: res.data.accessToken });
+        await finishLogin(res.data.accessToken);
         toast({
           title: "Welcome back!",
-          description: "You are now signed in.",
+          description: "Your bag has been updated.",
         });
-        router.push("/");
         return;
       }
 
@@ -121,8 +129,7 @@ export function AuthForm({
         userId: data.userId,
         password: data.password,
       });
-      setLoggedIn({ token: loginRes.data.accessToken });
-      router.push("/");
+      await finishLogin(loginRes.data.accessToken);
     } catch (error) {
       const typeError = error as IApiError;
       toast({

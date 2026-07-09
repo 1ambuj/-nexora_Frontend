@@ -28,7 +28,7 @@ export const useAddUserAddress = () => {
         title: "Address Added Successfully",
         variant: "default",
       });
-      router.replace("/address/select");
+      router.replace("/address");
     },
     onError: (error) => {
       const { msg } = getMutationErrorMsg(error, "Item");
@@ -62,7 +62,7 @@ export const useEditUserAddress = () => {
         title: "Address Edited Successfully",
         variant: "default",
       });
-      router.replace("/address/select");
+      router.replace("/address");
     },
     onError: (error) => {
       const { msg } = getMutationErrorMsg(error, "Item");

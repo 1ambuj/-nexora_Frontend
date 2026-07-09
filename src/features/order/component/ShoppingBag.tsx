@@ -19,17 +19,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LoginDialog from "./ui/LoginDialog";
 import ScreenLoader from "@/components/loader/ScreenLoader";
+import { useSyncOfflineCart } from "@/hooks/use-sync-offline-cart";
 
 const ShoppingBag = () => {
 
-  const { data: cartData, refetch } = useGetCart();
+  const { data: cartData, refetch, isFetching } = useGetCart();
   const cartItems = useBoundStore((state) => state.cartItems);
   const token = useBoundStore((state) => state.token);
   const router = useRouter();
   const deleteCart = useBoundStore((state) => state.deleteCartItem);
   const updateCartState = useBoundStore((state) => state.updateCart);
+  const syncOfflineCart = useSyncOfflineCart();
 
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
+  const [isSyncingCart, setIsSyncingCart] = useState(false);
 
   const deleteCartMutation = useDeleteCartItem();
   const updateCartMutation = useUpdateCartItem();
@@ -67,8 +70,26 @@ const ShoppingBag = () => {
   useEffect(() => {
     if (!token) {
       refetch();
+      return;
     }
-  }, [cartItems]);
+
+    if (cartItems.length === 0) return;
+
+    let cancelled = false;
+
+    (async () => {
+      setIsSyncingCart(true);
+      await syncOfflineCart();
+      if (!cancelled) {
+        await refetch();
+        setIsSyncingCart(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, cartItems.length, refetch, syncOfflineCart]);
 
   let totalPrice = 0;
   let totalItem = 0;
@@ -84,7 +105,7 @@ const ShoppingBag = () => {
     }
   }
 
-  console.log(updateCartMutation.isPending)
+  const isLoadingCart = isSyncingCart || isFetching;
 
   return (
     <>
@@ -146,7 +167,7 @@ const ShoppingBag = () => {
           setOpenLoginDialog(val);
         }}
       />
-      <ScreenLoader open={deleteCartMutation.isPending || updateCartMutation.isPending} />
+      <ScreenLoader open={deleteCartMutation.isPending || updateCartMutation.isPending || isLoadingCart} />
     </>
   );
 };

@@ -28,6 +28,7 @@ type ICartAction = {
   }): void;
   deleteCartItem(cartId: string): void;
   setTotalCartItem(n: number): void;
+  clearLocalCart(): void;
 };
 
 export type ICartStore = ICartAction & ICartState;
@@ -92,5 +93,8 @@ export const cartStore: StateCreator<IBoundStore, IMutators, [], ICartStore> = (
   setTotalCartItem(n) {
     if (n < 0) n = 0;
     set({ totalCartItem: n });
+  },
+  clearLocalCart() {
+    set({ cartItems: [], totalCartItem: 0 });
   },
 });

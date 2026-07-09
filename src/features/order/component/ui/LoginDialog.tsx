@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { LockKeyhole, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { setPostLoginRedirect } from "@/utils/checkout";
 
 function LoginDialog({
   open,
@@ -23,6 +24,7 @@ function LoginDialog({
 
   function handleLogin() {
     onOpenChange(false);
+    setPostLoginRedirect("/address");
     router.push("/login");
   }
 
